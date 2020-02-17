@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Pacman++</title>
+
+    <script src="import/math.min.js"></script>
+    <script src="import/jquery.min.js"></script>
+    <script src="import/heap.js"></script>
+
+    <link href="styles/reset.css" rel="stylesheet" type="text/css"/>
+    <link href="styles/style.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+
+<table id="map"></table>
+<canvas id="game"></canvas>
+
+<script src="scripts/init/utils.js"></script>
+<script src="scripts/init/constants.js"></script>
+
+<script src="scripts/init/canvas_init.js"></script>
+<script src="scripts/init/resources.js"></script>
+<script src="scripts/init/maze_generator.js"></script>
+<script src="scripts/init/path_finder.js"></script>
+<script src="scripts/init/color_scheme.js"></script>
+
+<script src="scripts/model.js"></script>
+<script src="scripts/controllers.js"></script>
+<script src="scripts/visualizer.js"></script>
+
+<script src="scripts/scenarios.js"></script>
+<script>
+
+    runPathFindingScenario();
+
+</script>
+</body>
+</html>

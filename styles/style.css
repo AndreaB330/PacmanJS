@@ -1,0 +1,34 @@
+body {
+    position: absolute;
+    bottom: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    overflow-x: hidden;
+    overflow-y: hidden;
+}
+
+canvas {
+    width: 200px;
+    height: 100px;
+    top: 0;
+    left: 0;
+    position: absolute;
+}
+
+table {
+    overflow-x: hidden;
+    overflow-y: hidden;
+    border-spacing: 0;
+    border-collapse: collapse;
+}
+
+table, td, tr, image {
+    padding: 0;
+    margin: 0;
+    border: none;
+}
+
+tr, image {
+    display: block;
+}

@@ -1,0 +1,70 @@
+body {
+    font-family: Abel, serif;
+    display: flex;
+    align-items: center; /* horizontal */
+    justify-content: center; /* vertical */
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: 0;
+}
+
+.background {
+    background: url("../resources/background.jpg") no-repeat fixed center;
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    z-index: -1;
+}
+
+.background::after {
+    background: radial-gradient(#404040, #000000);
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    content: "";
+    opacity: 0.96;
+}
+
+.buttons {
+    display: block;
+}
+
+.button {
+    color: white;
+    text-decoration: none;
+    padding: 20px;
+    border-radius: 10px;
+    display: block;
+    border: 2px solid #404040;
+    text-align: center;
+    background-color: rgba(40, 40, 40, 0.4);
+    width: 12em;
+    height: 12em;
+    position: relative;
+}
+
+.button.pathfinding {
+    background: url('../resources/pathfinding-logo.png') no-repeat fixed center, rgba(40, 40, 40, 0.4);
+
+    background-size: 15%;
+}
+
+.button:hover {
+    cursor: pointer;
+    background-color: rgba(40, 40, 40, 0.8);
+}
+
+.button .name {
+    font-weight: bold;
+    font-size: 1.2em;
+    position: absolute;
+    bottom: 1em;
+    left: 0;
+    width: 100%;
+}
