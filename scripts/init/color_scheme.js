@@ -148,4 +148,4 @@ class MineColoring extends BaseColoring {
     }
 }
 
-const COLORING = EndColoring;
+let COLORING = EndColoring;

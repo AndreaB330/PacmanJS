@@ -28,6 +28,7 @@ class AStar {
     constructor(graph, distance_estimation) {
         this.graph = graph;
         this.distance_heuristic = distance_estimation;
+        this.blocked = [];
     }
 
     reset(from, to) {
@@ -35,26 +36,39 @@ class AStar {
         this.to = to;
         this.prev = {};
         this.dist = {};
+        this.tin = {};
+        this.memory = 0;
+        this.time = 0;
     }
 
     run(from, to) {
+        let t = new Timer();
         this.reset(from, to);
-        let [graph, prev, dist, h] = [this.graph, this.prev, this.dist, this.distance_heuristic];
+        let timer = 0;
+        let [graph, prev, dist, tin, h] = [this.graph, this.prev, this.dist, this.tin, this.distance_heuristic];
         prev[from] = from;
         dist[from] = 0;
+        tin[from] = timer++;
         let heap = new BinaryHeap();
-        heap.insert(h(from, to), from);
+        heap.insert(h(from, to, timer) + dist[from], from);
+        let visits = 0;
         while (!heap.isEmpty() && !prev[to]) {
             let u = heap.extractMinimum().value;
+            visits++;
             graph.get_adjacent(u).forEach(v => {
+                if (this.blocked.some(o => eq(v, o))) return;
                 if (dist[v] === undefined || dist[v] > dist[u] + 1) { // default edge len: 1
                     prev[v] = u;
                     dist[v] = dist[u] + 1;
-                    heap.insert(h(v, to) + dist[v], v);
+                    tin[v] = timer++;
+                    heap.insert(h(v, to, timer) + dist[v], v);
                 }
             });
+            this.memory = Math.max(this.memory, heap.size()*32);
         }
         this.path = this.get_path();
+        this.time = t.get_delta();
+        this.memory += 3*32*visits;
     }
 
     get_path() {
@@ -69,6 +83,10 @@ class AStar {
         path.reverse();
         return path;
     }
+}
+
+function GetDFSPathFinder(graph) {
+    return new AStar(graph, (u, v, t) => -t);
 }
 
 function GetBFSPathFinder(graph) {

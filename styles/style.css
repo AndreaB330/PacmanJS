@@ -6,6 +6,7 @@ body {
     right: 0;
     overflow-x: hidden;
     overflow-y: hidden;
+    font-family: Abel, sans-serif;
 }
 
 canvas {
@@ -31,4 +32,68 @@ table, td, tr, image {
 
 tr, image {
     display: block;
+}
+
+.controls {
+    position: absolute;
+    left: 8px;
+    bottom: 8px;
+    padding: 8px;
+    opacity: 0.85;
+    background-color: white;
+    border: 1px solid #606060;
+    user-select: none;
+}
+
+.controls:hover {
+    opacity: 0.98;
+}
+
+.row.buttons {
+    display: table;
+    border-spacing: 4px;
+}
+
+.btn {
+    width: 4em;
+    text-align: center;
+    display: table-cell;
+    padding: 4px;
+    border-radius: 2px;
+    border: 1px solid #606060;
+}
+
+.btn:hover {
+    cursor: pointer;
+    background-color: #CCCCCC;
+}
+
+.active {
+    background-color: #404040;
+    color: white;
+}
+
+.btn.active:hover {
+    cursor: default;
+    background-color: #404040;
+    color: white;
+}
+
+.controls .row {
+    width: 100%;
+}
+
+#head {
+    position: absolute;
+    color: black;
+    font-weight: bold;
+    top: 5px;
+    margin-left: -81px;
+    width: 150px;
+    left: 50%;
+    background-color: white;
+    padding: 10px;
+    text-align: center;
+    font-size: 2em;
+    border: 1px solid #606060;
 }

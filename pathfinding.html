@@ -4,9 +4,14 @@
     <meta charset="UTF-8">
     <title>Pacman++</title>
 
+    <link href="https://fonts.googleapis.com/css?family=Abel|Dosis|Raleway&display=swap" rel="stylesheet">
     <script src="import/math.min.js"></script>
     <script src="import/jquery.min.js"></script>
     <script src="import/heap.js"></script>
+    <script
+            src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js"
+            integrity="sha256-eGE6blurk5sHj+rmkfsGYeKyZx3M4bG+ZlFyA7Kns7E="
+            crossorigin="anonymous"></script>
 
     <link href="styles/reset.css" rel="stylesheet" type="text/css"/>
     <link href="styles/style.css" rel="stylesheet" type="text/css"/>
@@ -15,6 +20,27 @@
 
 <table id="map"></table>
 <canvas id="game"></canvas>
+
+<div class="controls">
+
+    <div class="row buttons">
+        <div class="btn" onclick="activateDFS()" id="dfs">DFS</div>
+        <div class="btn" onclick="activateBFS()" id="bfs">BFS</div>
+        <div class="btn active" onclick="activateAStar()" id="astar">A*</div>
+    </div>
+    <div class="row">Memory consumed: <a id="memory">0</a>kb</div>
+    <div class="row">Time consumed: <a id="time">0</a>ms</div>
+    <br>
+    <div class="row buttons">
+        <div class="btn coloring" onclick="change_color_scheme(NetherColoring, this)">Nether</div>
+        <div class="btn coloring" onclick="change_color_scheme(OverworldColoring, this)">Overworld</div>
+        <div class="btn coloring active" onclick="change_color_scheme(EndColoring, this)">Ender</div>
+        <div class="btn coloring" onclick="change_color_scheme(MineColoring, this)">Mine</div>
+        <div class="btn coloring" onclick="change_color_scheme(DesertColoring, this)">Desert</div>
+        <div class="btn coloring" onclick="change_color_scheme(NorthPoleColoring, this)">North</div>
+    </div>
+
+</div>
 
 <script src="scripts/init/utils.js"></script>
 <script src="scripts/init/constants.js"></script>
@@ -32,7 +58,50 @@
 <script src="scripts/scenarios.js"></script>
 <script>
 
-    runPathFindingScenario();
+    let bundle = {
+        on_state_changed: (time, memory) => {
+            $('#memory').text(memory/1000);
+            $('#time').text(time);
+        }
+    };
+    runPathFindingScenario(bundle);
+
+    function change_color_scheme(cs, btn) {
+        bundle.change_color_scheme(cs);
+        $('.btn.coloring.active').removeClass('active');
+        $(btn).addClass('active');
+    }
+
+    $('.controls').draggable({
+        addClasses: false,
+        create: function (event, ui) {
+            $(this).css({
+                top: $(this).position().top,
+                bottom: "auto"
+            });
+        }
+    });
+
+    function activateDFS() {
+        $('#dfs').addClass('active');
+        $('#bfs').removeClass('active');
+        $('#astar').removeClass('active');
+        bundle.pathfinder = GetDFSPathFinder;
+    }
+
+    function activateBFS() {
+        $('#dfs').removeClass('active');
+        $('#bfs').addClass('active');
+        $('#astar').removeClass('active');
+        bundle.pathfinder = GetBFSPathFinder;
+    }
+
+    function activateAStar() {
+        $('#dfs').removeClass('active');
+        $('#bfs').removeClass('active');
+        $('#astar').addClass('active');
+        bundle.pathfinder = GetManhattanAStarPathFinder;
+    }
 
 </script>
 </body>

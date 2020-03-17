@@ -1,4 +1,4 @@
-function generate_maze(w, h, bridges=0.0) {
+function generate_maze(w, h, bridges = 0.0) {
     let tiles = generateArray([w, h], 1);
     let to_id = (x, y) => x * h + y;
     let p = [];
@@ -70,6 +70,28 @@ function generate_maze(w, h, bridges=0.0) {
         }
         if (get(first) !== get(second) || Math.random() < bridges) {
             destroy(wall[0], wall[1]);
+        }
+    });
+    tableIterator(w, h, (i, j) => {
+        if (i % 2 === 1 && j % 2 === 1) {
+            let walls_local = [];
+            let opens = 0;
+            for (let dir = 0; dir < 4; dir++) {
+                let pos = math.add([i, j], DELTAS[dir]);
+                if (pos[0] <= 0 || pos[1] <= 0 || pos[0] >= w-1 || pos[1] >= h - 1) continue;
+                if (at(tiles, pos) === 1) {
+                    walls_local.push(pos);
+                } else {
+                    opens += 1;
+                }
+            }
+            shuffle(walls_local);
+            if (opens === 2 && walls_local.length > 0 && Math.random() < 0.4) {
+                destroy(walls_local[0][0], walls_local[0][1]);
+            }
+            if (opens === 1) {
+                destroy(walls_local[0][0], walls_local[0][1]);
+            }
         }
     });
     return {tiles: tiles, rooms: rooms};

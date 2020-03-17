@@ -4,8 +4,8 @@ const ctx = canvas.getContext('2d');
 function drawTexture(texture, x, y, w = 1.0, h = 1.0) {
     ctx.drawImage(
         get_texture(texture),
-        (x + PADDING) * TILE_SIZE * dpi,
-        (y + PADDING) * TILE_SIZE * dpi,
+        (x + PADDING_X) * TILE_SIZE * dpi,
+        (y + PADDING_Y) * TILE_SIZE * dpi,
         w * TILE_SIZE * dpi,
         h * TILE_SIZE * dpi
     );
@@ -14,8 +14,8 @@ function drawTexture(texture, x, y, w = 1.0, h = 1.0) {
 function drawColor(color, x, y, w = 1.0, h = 1.0) {
     ctx.fillStyle = color;
     ctx.fillRect(
-        (x + PADDING) * TILE_SIZE * dpi,
-        (y + PADDING) * TILE_SIZE * dpi,
+        (x + PADDING_X) * TILE_SIZE * dpi,
+        (y + PADDING_Y) * TILE_SIZE * dpi,
         w * TILE_SIZE * dpi,
         h * TILE_SIZE * dpi
     );
@@ -44,6 +44,6 @@ $(window).ready(() => {
     resized();
     TABLE_WIDTH = Math.ceil(document.body.clientWidth / TILE_SIZE);
     TABLE_HEIGHT = Math.ceil(document.body.clientHeight / TILE_SIZE);
-    MAX_WIDTH = largestOdd(TABLE_WIDTH - 2 * PADDING);
-    MAX_HEIGHT = largestOdd(TABLE_HEIGHT - 2 * PADDING);
+    MAX_WIDTH = largestOdd(TABLE_WIDTH - 2 * PADDING_X);
+    MAX_HEIGHT = largestOdd(TABLE_HEIGHT - 2 * PADDING_Y);
 });

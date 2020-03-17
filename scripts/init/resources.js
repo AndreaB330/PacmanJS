@@ -40,7 +40,11 @@ let IMAGE_DIAMOND_ORE = "resources/tiles/diamond_ore.png";
 let IMAGE_REDSTONE_ORE = "resources/tiles/redstone_ore.png";
 let IMAGE_IRON_ORE = "resources/tiles/iron_ore.png";
 let IMAGE_GOLD_ORE = "resources/tiles/gold_ore.png";
+
 let IMAGE_CROSS = "resources/markers/cross.png";
+
+let IMAGE_COIN = "resources/items/coin.png";
+let IMAGE_DIAMOND = "resources/items/diamond.png";
 
 let PACMAN = [
     "resources/pacman/pacman-up.png",
@@ -58,6 +62,14 @@ let GHOST = [
     "resources/mobs/creep-idle.png"
 ];
 
+let ENDER = [
+    "resources/mobs/ender-idle.png",
+    "resources/mobs/ender-idle.png",
+    "resources/mobs/ender-idle.png",
+    "resources/mobs/ender-idle.png",
+    "resources/mobs/ender-idle.png"
+];
+
 let IMAGE_REDSTONE = new Array(16).fill(null);
 
 for(let i = 0; i < 16; i++) {
@@ -69,3 +81,4 @@ for(let i = 0; i < 16; i++) {
     IMAGE_REDSTONE[i] = name;
     get_texture(name);
 }
+IMAGE_REDSTONE[0] = IMAGE_CROSS;

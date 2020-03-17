@@ -47,12 +47,19 @@ body {
     width: 12em;
     height: 12em;
     position: relative;
+    float: left;
 }
 
 .button.pathfinding {
-    background: url('../resources/pathfinding-logo.png') no-repeat fixed center, rgba(40, 40, 40, 0.4);
+    background: rgba(40, 40, 40, 0.4) url('../resources/pathfinding-logo.png') no-repeat center;
 
-    background-size: 15%;
+    background-size: 85%;
+}
+
+.button.ai {
+    background: rgba(40, 40, 40, 0.4) url('../resources/ai-logo.png') no-repeat center;
+
+    background-size: 85%;
 }
 
 .button:hover {

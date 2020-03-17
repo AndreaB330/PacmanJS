@@ -40,4 +40,5 @@ let TABLE_WIDTH = 12;
 let TABLE_HEIGHT = 10;
 let MAX_WIDTH = 8;
 let MAX_HEIGHT = 6;
-let PADDING = 2;
+let PADDING_X = 2;
+let PADDING_Y = 2;

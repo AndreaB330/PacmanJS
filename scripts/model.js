@@ -1,3 +1,5 @@
+const COIN_ANIMATION_TIME = 0.6;
+
 class GameMap {
     constructor(width, height, bridges = 0.15) {
         this.width = width;
@@ -27,7 +29,7 @@ class GameMap {
         let g = new Graph();
         tableIterator(this.width, this.height, (i, j) => {
             let u = [i, j];
-            for(let dir = 0; dir < 4; dir++) {
+            for (let dir = 0; dir < 4; dir++) {
                 let v = math.add(u, DELTAS[dir]);
                 if (!this.is_blocked(u) && !this.is_blocked(v)) {
                     g.add_edge(u, v);
@@ -39,13 +41,13 @@ class GameMap {
 }
 
 class Unit {
-    constructor(id, x, y, textures, speed) {
+    constructor(id, x, y, textures) {
         this.id = id;
         this.pos = [x, y];
+        this.prev_pos = [x, y];
         this.textures = textures;
-        this.speed = speed;
         this.direction = Direction.NONE;
-        this.next_direction = Direction.NONE;
+        this.dead = false;
     }
 
     tile_pos() {
@@ -58,22 +60,46 @@ class Unit {
 }
 
 class Player extends Unit {
-    constructor(id, x, y, speed) {
-        super(id, x, y, PACMAN, speed);
+    constructor(id, x, y) {
+        super(id, x, y, PACMAN);
         this.score = 0;
+    }
+
+    isPlayer() {
+        return true;
     }
 }
 
 class Ghost extends Unit {
-    constructor(id, x, y, speed) {
-        super(id, x, y, GHOST, speed);
+    constructor(id, x, y, skip) {
+        super(id, x, y, (skip === 3 ? GHOST : ENDER));
+        this.skip = skip;
+        this.sh = Math.floor(Math.random() * skip);
+    }
+
+    isPlayer() {
+        return false;
     }
 }
 
 class Game {
-    constructor(map) {
+    constructor(map, tick_base = 1) {
         this.map = map;
         this.units = [];
+        this.tick_base = tick_base;
+        this.tick_bank = 0;
+        this.width = map.width;
+        this.height = map.height;
+        this.coin = generateArray([this.width, this.height], 0);
+        this.visited = generateArray([this.width, this.height], 0);
+        this.coin_animations = [];
+        this.current_tick = 0;
+        tableIterator(this.width, this.height, (i, j) => {
+            if (!map.is_blocked([i, j])) {
+                this.coin[i][j] = 1;
+                if (Math.random() < 0.05) this.coin[i][j] += 1;
+            }
+        });
     }
 
     addUnit(unit) {
@@ -81,26 +107,69 @@ class Game {
     }
 
     update(dt) {
-        this.units.forEach(u => this.updateUnit(u, dt));
+        this.tick_bank -= dt;
+        if (this.tick_bank < 0) {
+            this.tick();
+            this.tick_bank += this.tick_base;
+        }
+        let alive_coin_animations = [];
+        this.coin_animations.forEach(a => {
+            a.time_bank -= dt;
+            a.pos = math.add(a.pos, math.multiply(a.vel, dt));
+            a.vel = math.add(a.vel, math.multiply([0, 30], dt));
+            if (a.time_bank >= 0)
+                alive_coin_animations.push(a);
+        });
+        this.coin_animations = alive_coin_animations;
     }
 
-    updateUnit(u, dt) {
-        let tile_pos = math.round(u.pos);
-        let center = math.floor(u.pos);
-        u.pos = math.add(u.pos, math.multiply(DELTAS[u.direction], u.speed * dt));
-        if (math.distance(math.floor(u.pos), center) > 0 ||
-            math.distance(tile_pos, u.pos) < dt * u.speed * 1.1) {
-            if (!this.map.is_blocked(tile_pos, u.next_direction)) {
-                u.direction = u.next_direction;
-                let delta = math.distance(math.round(u.pos), u.pos);
-                u.pos = math.round(u.pos);
-                u.pos = math.add(u.pos, math.multiply(DELTAS[u.direction], delta));
+    tick() {
+        this.current_tick += 1;
+        tableIterator(this.width, this.height, (i, j) => {
+            this.visited[i][j] *= 0.95;
+        });
+        this.units.forEach(u => {
+            if (u.dead) return;
+            if (!u.isPlayer() && (this.current_tick + u.sh) % u.skip !== 0) {
+                u.prev_pos = u.pos;
+                u.direction = Direction.NONE;
+                return;
             }
-        }
-        let next_tile = math.floor(math.add(u.pos, math.multiply(math.add(DELTAS[u.direction], [1, 1]), 0.5)));
-        if (this.map.is_blocked(next_tile)) {
-            u.pos = math.round(u.pos);
-            u.next_direction = Direction.NONE;
-        }
+            if (u.isPlayer()) {
+                this.visited[u.pos[0]][u.pos[1]] += 1;
+            }
+            if (u.controller) {
+                let tile_pos = math.round(u.pos);
+                if (this.coin[tile_pos[0]][tile_pos[1]] && u.score !== undefined) {
+                    let score = this.coin[tile_pos[0]][tile_pos[1]];
+                    this.coin[tile_pos[0]][tile_pos[1]] = 0;
+                    u.score += score;
+                    this.coin_animations.push({
+                        pos: tile_pos,
+                        vel: [4 * (Math.random() - 0.5), -7],
+                        time_bank: COIN_ANIMATION_TIME,
+                        texture: (score === 1 ? IMAGE_COIN : IMAGE_DIAMOND)
+                    });
+                }
+                u.prev_pos = tile_pos;
+                let next_direction = u.controller.get_direction();
+                if (!this.map.is_blocked(tile_pos, next_direction)) {
+                    u.direction = next_direction;
+                    u.pos = math.add(tile_pos, DELTAS[u.direction]);
+                } else if (!this.map.is_blocked(tile_pos, u.direction)) {
+                    u.pos = math.add(tile_pos, DELTAS[u.direction]);
+                } else {
+                    u.direction = Direction.NONE;
+                }
+            }
+            this.units.forEach(v => {
+                if (u.isPlayer() && !v.isPlayer() && eq(v.pos, u.pos)) {
+                    u.dead = true;
+                }
+                if (!u.isPlayer() && v.isPlayer() && eq(v.pos, u.pos)) {
+                    v.dead = true;
+                }
+            });
+        });
     }
 }
